@@ -1,0 +1,1 @@
+a green plant in a pot
