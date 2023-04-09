@@ -1,20 +1,28 @@
+import nltk
+from sklearn.cluster import KMeans
+import numpy as np
+import sys 
+sys.path.append('.')
+sys.path.append('..')
 
+from utils.attention_utils import aggregation_attention
 class Segmentor:
 
-    def __init__(self, controller, prompts, num_segments, background_segment_threshold, res=32, background_nouns=[]):
-        self.controller = controller
-        self.prompts = prompts
-        self.num_segments = num_segments
-        self.background_segment_threshold = background_segment_threshold
-        self.resolution = res
-        self.background_nouns = background_nouns
+    def __init__(self, method, controller, prompts, num_segments, background_segment_threshold, res=32, background_nouns=[]):
+        self.method                         = method
+        self.controller                     = controller
+        self.prompts                        = prompts
+        self.num_segments                   = num_segments
+        self.background_segment_threshold   = background_segment_threshold
+        self.resolution                     = res
+        self.background_nouns               = background_nouns
 
-        self.self_attention = aggregate_attention(controller, res=32, from_where=("up", "down"), prompts=prompts,
-                                             is_cross=False, select=len(prompts) - 1)                   # [32, 32, ]
-        self.cross_attention = aggregate_attention(controller, res=16, from_where=("up", "down"), prompts=prompts,
-                                              is_cross=True, select=len(prompts) - 1)
-        tokenized_prompt = nltk.word_tokenize(prompts[-1])
-        self.nouns = [(i, word) for (i, (word, pos)) in enumerate(nltk.pos_tag(tokenized_prompt)) if pos[:2] == 'NN']
+        self.self_attention                 = aggregate_attention(controller, res=32, from_where=("up", "down"), prompts=prompts,
+                                                                    is_cross=False, select=len(prompts) - 1)
+        self.cross_attention                = aggregate_attention(controller, res=16, from_where=("up", "down"), prompts=prompts,
+                                                                    is_cross=True, select=len(prompts) - 1)
+        tokenized_prompt                    = nltk.word_tokenize(prompts[-1])
+        self.nouns                          = [(i, word) for (i, (word, pos)) in enumerate(nltk.pos_tag(tokenized_prompt)) if pos[:2] == 'NN']
 
     def __call__(self, *args, **kwargs):
         clusters = self.cluster()
@@ -25,6 +33,7 @@ class Segmentor:
         np.random.seed(1)
         resolution = self.self_attention.shape[0]
         attn = self.self_attention.cpu().numpy().reshape(resolution ** 2, resolution ** 2)
+
         kmeans = KMeans(n_clusters=self.num_segments, n_init=10).fit(attn)
         clusters = kmeans.labels_
         clusters = clusters.reshape(resolution, resolution)
@@ -58,4 +67,3 @@ class Segmentor:
             else:
                 mask[clusters == c] = 1
         return mask
-
