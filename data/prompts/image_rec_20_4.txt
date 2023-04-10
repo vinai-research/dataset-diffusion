@@ -1,0 +1,2 @@
+Surfers are riding their boards on large waves .
+{0: 'BG', 1: 'BG', 2: (7, 'waves'), 3: 'BG', 4: (7, 'waves')}

@@ -1,0 +1,2 @@
+A golden retriever is jumping off a wooden porch
+{0: (8, 'porch'), 1: (8, 'porch'), 2: 'BG', 3: (2, 'retriever'), 4: 'BG'}

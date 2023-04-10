@@ -1,0 +1,2 @@
+Two girls with baseball caps are eating a snack outside .
+{0: 'BG', 1: 'BG', 2: 'BG', 3: (4, 'caps'), 4: (1, 'girls')}

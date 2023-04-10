@@ -1,0 +1,2 @@
+A young girl in a red top is running through a grassy area with large buildings in the background .
+{0: 'BG', 1: (12, 'area'), 2: (18, 'background'), 3: (15, 'buildings'), 4: (2, 'girl')}

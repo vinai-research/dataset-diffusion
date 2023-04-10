@@ -1,0 +1,2 @@
+A child playing in an inflatable pool .
+{0: (6, 'pool'), 1: 'BG', 2: 'BG', 3: (2, 'playing'), 4: 'BG'}

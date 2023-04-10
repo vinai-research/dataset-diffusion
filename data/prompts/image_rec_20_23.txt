@@ -1,0 +1,2 @@
+A little girl in a blue coat is rocking on a red playground toy .
+{0: 'BG', 1: 'BG', 2: (6, 'coat'), 3: (2, 'girl'), 4: (13, 'toy')}
