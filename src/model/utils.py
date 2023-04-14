@@ -44,7 +44,8 @@ def generate_mask_dense_crf(attention_store,
                             token_indices,
                             gen_images,
                             prompts,
-                            dense_crf_threshold=0.5):
+                            dense_crf_threshold=0.5,
+                            labels=None):
     max_resolution  = 512
     attention_store_res = dict()
     #   Get the attention maps of each token at different scale
@@ -81,6 +82,9 @@ def generate_mask_dense_crf(attention_store,
         
         mask = multi_class_dense_crf(attention=average_attention_map, image=gen_images[i], threshold=dense_crf_threshold)
         mask = np.argmax(mask, axis=0)
+        if labels is not None:
+            label = np.array(labels[i], dtype=np.uint8)
+            mask = label[mask]
         masks.append(mask)
     return masks
 
@@ -131,7 +135,7 @@ def get_valid_prompts(classes: List[str],
         norm_prompt = prompt.replace("woman", "person").replace("man", "person").replace("women", "person").replace("men", "person")
         tokens = word_tokenize(norm_prompt)
         normalized_tokens = [lemmatizer.lemmatize(token.lower()) for token in tokens]
-        curr_indices, curr_labels = [], []
+        curr_indices, curr_labels = [], [0]
         for i, token in enumerate(normalized_tokens):
             if token in classes_syn:
                 curr_indices.append(i + 1)
