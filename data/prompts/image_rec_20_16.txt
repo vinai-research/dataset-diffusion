@@ -1,0 +1,2 @@
+The man in the black hat is jumping over a chair with his skateboard .
+{0: (1, 'man'), 1: 'BG', 2: 'BG', 3: 'BG', 4: 'BG'}

@@ -1,0 +1,2 @@
+A skater rides his board on a ramp .
+{0: 'BG', 1: 'BG', 2: (7, 'ramp'), 3: (1, 'skater'), 4: 'BG'}

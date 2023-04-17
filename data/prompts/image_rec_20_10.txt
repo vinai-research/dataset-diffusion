@@ -1,0 +1,2 @@
+A man with a firecracker with a crowd of people behind him watching .
+{0: (4, 'firecracker'), 1: 'BG', 2: 'BG', 3: 'BG', 4: (9, 'people')}

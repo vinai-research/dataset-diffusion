@@ -1,0 +1,2 @@
+People are waiting to get their luggage .
+{0: (0, 'People'), 1: 'BG', 2: 'BG', 3: 'BG', 4: (6, 'luggage')}

@@ -1,0 +1,2 @@
+A dog wearing a red harness runs across a field
+{0: 'BG', 1: 'BG', 2: (5, 'harness'), 3: 'BG', 4: (1, 'dog')}

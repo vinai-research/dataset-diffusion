@@ -1,0 +1,2 @@
+A white dog with a red collar and a beige dog run near a pool with cats in the background .
+{0: 'BG', 1: 'BG', 2: (14, 'pool'), 3: 'BG', 4: (2, 'dog')}
