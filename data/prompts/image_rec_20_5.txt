@@ -1,2 +1,0 @@
-A man in orange holds soup ladles and makes a funny face .
-{0: 'BG', 1: (1, 'man'), 2: 'BG', 3: (6, 'ladles'), 4: 'BG'}

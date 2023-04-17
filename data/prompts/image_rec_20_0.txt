@@ -1,2 +1,0 @@
-A person is surfing on a wave while another person heads towards it .
-{0: 'BG', 1: 'BG', 2: 'BG', 3: 'BG', 4: 'BG'}

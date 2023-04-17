@@ -1,2 +1,0 @@
-A group of people are sitting below a concrete structure that overlooks a staircase .
-{0: 'BG', 1: 'BG', 2: 'BG', 3: 'BG', 4: 'BG'}
