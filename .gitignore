@@ -1,3 +1,10 @@
 data/ImageSets
 data/JPEGImages
 data/Segmentation*
+save/
+data/
+*.xml
+__pycache__/
+*.png
+*.txt
+*.jpg

@@ -5,10 +5,10 @@ import pyrallis
 import torch
 from PIL import Image
 
-from baseline.config import RunConfig
-from baseline.pipeline_attend_and_excite import AttendAndExcitePipeline
-from baseline.utils import ptp_utils, vis_utils
-from baseline.utils.ptp_utils import AttentionStore
+from config import RunConfig
+from pipeline_attend_and_excite import AttendAndExcitePipeline
+from utils import ptp_utils, vis_utils
+from utils.ptp_utils import AttentionStore
 
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -58,7 +58,6 @@ def run_on_prompt(prompt: List[str],
                     smooth_attentions=config.smooth_attentions,
                     sigma=config.sigma,
                     kernel_size=config.kernel_size  )
-
     image = outputs.images[0]
     return image
 
