@@ -369,9 +369,7 @@ class AttendAndExcitePipeline(StableDiffusionPipeline):
             low_word = []
             for idx, item in enumerate(indices_to_alter):
                 word =  self.tokenizer.decode(text_input.input_ids[0][item[low_token[idx]]])
-                
                 low_word.append(word)
-
             
             # low_word = self.tokenizer.decode(text_input.input_ids[0][indices_to_alter[low_token]])
             for idx, sent in enumerate(prompts):

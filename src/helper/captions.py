@@ -1,5 +1,6 @@
 import pandas as pd
-from pathlib import Path 
+import numpy as np
+from pathlib import Path
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 from nltk.corpus import wordnet
@@ -8,7 +9,8 @@ DIR = Path(__file__).resolve().parent.parent.parent
 PKL = DIR / 'data/voc_captions.pkl'
 SAVE_TEXT = DIR / 'data/VOC2012/Captions'
 
-def create_mapping_from_pkl(pickle_path)
+
+def create_mapping_from_pkl(pickle_path):
     """
     Create corresponding text file that includes the prompt used to generaed the
     image (with the same name of file, but different extension)
@@ -24,16 +26,15 @@ def create_mapping_from_pkl(pickle_path)
     cap_and_img = pd.read_pickle(pickle_path)
 
     for item in cap_and_img:
-        
+
         img_id, caption = item.values()
-        text_id         = img_id.split('.')[0] + '.txt'
-        with open(SAVE_TEXT / text_id, mode = 'w', encoding = 'utf-8') as writer:
+        text_id = img_id.split('.')[0] + '.txt'
+        with open(SAVE_TEXT / text_id, mode='w', encoding='utf-8') as writer:
             writer.writelines(caption)
-    
 
     text_list = [item for item in SAVE_TEXT.glob('*.txt')]
     img_path = DIR / 'data/VOC2012/JPEGImages'
-    img_list    = [item for item in img_path.glob('*.jpg')]
+    img_list = [item for item in img_path.glob('*.jpg')]
     assert len(text_list) == len(img_list)
 
 # def get_topk_similar_words(model, prompt, base_word, vocab, k=30):
@@ -108,15 +109,17 @@ def get_token_indices_from_classes(classes: List[str],
 
     lemmatizer = WordNetLemmatizer()
     for prompt in prompts:
-        prompt = prompt.replace("woman", "person").replace("man", "person").replace("women", "person").replace("men", "person")
+        prompt = prompt.replace("woman", "person").replace(
+            "man", "person").replace("women", "person").replace("men", "person")
         tokens = word_tokenize(prompt)
-        normalized_tokens = [lemmatizer.lemmatize(token.lower()) for token in tokens]
+        normalized_tokens = [lemmatizer.lemmatize(
+            token.lower()) for token in tokens]
         curr_indices, curr_labels = [], []
         for i, token in enumerate(normalized_tokens):
             if token in classes_syn:
                 curr_indices.append(i + 1)
                 curr_labels.append(classes_syn[token])
-                
+
         indices.append(curr_indices)
         class_labels.append(curr_labels)
         if len(indices) == 0:
@@ -138,19 +141,21 @@ def get_valid_prompts(classes: List[str],
                 classes_syn.update({lemma.name(): class_id})
 
     lemmatizer = WordNetLemmatizer()
-    for prompt in prompts:
-        norm_prompt = prompt.replace("woman", "person").replace("man", "person").replace("women", "person").replace("men", "person")
+    for i, prompt in enumerate(prompts):
+        norm_prompt = prompt.replace("woman", "person").replace(
+            "man", "person").replace("women", "person").replace("men", "person")
         tokens = word_tokenize(norm_prompt)
-        normalized_tokens = [lemmatizer.lemmatize(token.lower()) for token in tokens]
+        normalized_tokens = [lemmatizer.lemmatize(
+            token.lower()) for token in tokens]
         curr_indices, curr_labels = [], [0]
-        for i, token in enumerate(normalized_tokens):
+        for j, token in enumerate(normalized_tokens):
             if token in classes_syn:
-                curr_indices.append(i + 1)
+                curr_indices.append(j + 1)
                 curr_labels.append(classes_syn[token])
-                
+
         if len(curr_indices) != 0:
-            valid_prompts.append(prompt)
+            valid_prompts.append(i)
             indices.append(curr_indices)
             class_labels.append(curr_labels)
-            
+
     return indices, class_labels, valid_prompts

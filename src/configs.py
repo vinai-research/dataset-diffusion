@@ -1,10 +1,11 @@
-from dataclasses import dataclass 
+from dataclasses import dataclass
 from pathlib import Path
 from typing import List
 
+
 @dataclass
 class GeneratorConfig:
-    
+    # fmt: off
     attention_res           = 32
     height                  = None
     width                   = None
@@ -31,29 +32,37 @@ class GeneratorConfig:
     kernel_size             = 3 
     run_standard_sd         = False
     seed                    = 1123
+    # fmt: on
+
 
 @dataclass
 class SegmentorConfig:
-    seed:   int                         = 1123
-
+    # fmt: off
+    seed: int = 1123
     #   0 - Kmeans, 1 - DBSCAN, 2 - Optics
-    method: int                             = 0
-    num_segments: int                       = 5
+    method: int         = 0
+    num_segments: int   = 5
     bg_threshold: float = 0.45
-    resolution: int                         = 32
-    bg_nouns                          = []
+    resolution: int     = 32
+    bg_nouns            = []
+    # fmt: on
+
 
 @dataclass
 class PathConfig:
+    # fmt: off
     BASE        = 'VOC2012_1'
     BASEDIR     = Path(__file__).resolve().parent.parent
-    DATADIR     = BASEDIR / 'data'
-    PRETRAINED  = BASEDIR / 'pretrained'
+    DATADIR     = BASEDIR / 'data/voc_captions.json'
+    PRETRAINED  = '/vinai/truongvt/checkpoints/stable-diffusion-v1-5/'
     SAVE        = BASEDIR / 'save'
     TEXTDIR     = DATADIR / 'VOC2012/Captions'
+    # fmt: on
 
-@dataclass 
+
+@dataclass
 class DenseCRFConfig:
+    # fmt: off
     MAX_ITER = 10
     POS_W = 3
     POS_XY_STD = 1
@@ -61,3 +70,4 @@ class DenseCRFConfig:
     Bi_XY_STD = 67
     Bi_RGB_STD = 3
     threshold  = 0.45
+    # fmt: on
