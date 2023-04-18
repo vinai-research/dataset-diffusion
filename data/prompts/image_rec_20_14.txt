@@ -1,2 +1,0 @@
-A man in midair holding his bike 's handlebars
-{0: (6, 'bike'), 1: 'BG', 2: 'BG', 3: 'BG', 4: 'BG'}

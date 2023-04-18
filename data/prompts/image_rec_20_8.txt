@@ -1,2 +1,0 @@
-A race dog with the number seven runs fast on a dog track .
-{0: 'BG', 1: 'BG', 2: (2, 'dog'), 3: (12, 'track'), 4: (2, 'dog')}

@@ -1,2 +1,0 @@
-A man sits on a hill overlooking the coutryside .
-{0: 'BG', 1: 'BG', 2: 'BG', 3: (5, 'hill'), 4: (1, 'man')}

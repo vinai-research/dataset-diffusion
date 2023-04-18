@@ -1,2 +1,0 @@
-Several women and men are lifting their arms straight up above their heads .
-{0: (1, 'women'), 1: 'BG', 2: 'BG', 3: 'BG', 4: 'BG'}

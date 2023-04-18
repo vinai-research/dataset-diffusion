@@ -1,2 +1,0 @@
-A Group of people wearing white head bands with two white fluffy balls on each one .
-{0: 'BG', 1: 'BG', 2: 'BG', 3: 'BG', 4: (11, 'fluffy')}

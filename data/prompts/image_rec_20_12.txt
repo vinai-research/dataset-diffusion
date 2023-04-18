@@ -1,2 +1,0 @@
-A crowd of joyful people parade through an Asian street with black banners .
-{0: (1, 'crowd'), 1: (4, 'people'), 2: 'BG', 3: (1, 'crowd'), 4: 'BG'}
