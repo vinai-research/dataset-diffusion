@@ -132,3 +132,4 @@ __pycache__/
 *.txt
 *.jpg
 nltk_data
+sync.sh
