@@ -133,3 +133,6 @@ __pycache__/
 *.jpg
 nltk_data
 sync.sh
+gen_captions.py
+*.json
+*.pkl
