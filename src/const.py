@@ -7,9 +7,30 @@ classes=['aeroplane', 'bicycle', 'bird', 'boat',
         'sofa', 'train', 'tvmonitor']
 
 ALIAS = {
+    'aeroplane' : [
+        'airplane',
+        'plane',
+        'aircraft',
+        'jet',
+    ],
+    'bicycle':  [],
+    'bird': [],
+    'boat': [],
+    'bottle': [],
+    'bus': [],
+    'car': [],
+    'cat': [],
+    'cow': [],
+    'dog': [],
+    'horse': [],
+    'sheep': [],
+    'sofa': [],
+    'train': [],
     'person' : [
         'man',
         'men',
+        'female',
+        'male',
         'women',
         'woman',
         'kids',
@@ -20,13 +41,7 @@ ALIAS = {
         'people',
         'children',
     ],
-
-    'aeroplane' : [
-        'airplane',
-        'plane',
-        'aircraft',
-        'jet',
-    ],
+    
 
     'diningtable' : [
         'dining table',
@@ -35,29 +50,25 @@ ALIAS = {
         'desk',
         
     ],
-
     'chair' : [
         'bench',
         'couch',
     ],
-
     'motorbike ': [
         'motor',
         'motorcycle',
         'bike',
     ],
-
     'tvmonitor' : [
         'tv',
         'television',
         'monitor',
         'monitors',
     ],
-
     'pottedplant' : [
         'plant',
         'plants',
         'potted plant',
         'potted plants',
-    ]
+    ],
 }
