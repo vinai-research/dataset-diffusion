@@ -54,7 +54,7 @@ ALIAS = {
         'bench',
         'couch',
     ],
-    'motorbike ': [
+    'motorbike': [
         'motor',
         'motorcycle',
         'bike',

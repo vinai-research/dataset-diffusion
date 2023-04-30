@@ -1,29 +1,53 @@
 from urllib.request import urlretrieve
 import pandas as pd
+from const import *
+import json 
+from pathlib import Path
+from nltk.tokenize import word_tokenize
 
-# Download the parquet table
-# table_url = f'https://huggingface.co/datasets/poloclub/diffusiondb/resolve/main/metadata.parquet'
-# urlretrieve(table_url, 'metadata.parquet')
-classes=['aeroplane', 'bicycle', 'bird', 'boat',
-        'bottle', 'bus', 'car', 'cat', 'chair', 'cow', 'diningtable',
-        'dog', 'horse', 'motorbike', 'person', 'pottedplant', 'sheep',
-        'sofa', 'train', 'tvmonitor']
+BASE = Path(__file__).resolve().parent.parent
+RANGE = 1000
 
-RANGE = 100000
-# # Read the table using Pandas
-metadata_df = pd.read_parquet('metadata.parquet')
-json_file = metadata_df['prompt'][:RANGE].to_dict()
-# breakpoint()
-path = 'prompt_diffusiondb.json'
-import json
-obj = None
-with open(path, 'w') as writer:
-    json.dump(json_file, writer)
-writer.close()
-with open(path, mode = 'r') as reader:
-    obj = json.load(reader)
-reader.close()
+def open_json(path):
+    obj = None
+    with open(path, mode = 'r') as reader:
+        obj = json.load(reader) 
+    reader.close()
+    return obj
 
-for key, value in obj.items():
-    print(value)
-breakpoint()
+def write_json(path, json_obj):
+    try:
+        with open(path, mode = 'w') as writer:
+            json.dump(json_obj, writer)
+        writer.close()
+        return True
+    except Exception:
+        return False
+
+def get_prompts_diffusiondb(metadata: Path):
+    path = str(metadata)
+    df = pd.read_parquet(path)
+    json_file = df['prompt'][:RANGE].to_list()       #   List of prompt retrieve from the diffusion db
+    
+    #   Init the mapping dict of prompt
+    retrieve_prompts = {}
+    for item in classes:
+        retrieve_prompts[item] = []
+
+    for prompt in json_file:
+        tokens = word_tokenize(prompt)
+
+        for class_name, alias in ALIAS.items():
+            if class_name in tokens or any(x in tokens for x in alias):
+                retrieve_prompts[class_name].append(prompt)
+
+    return retrieve_prompts 
+
+if __name__ == '__main__':
+
+    metadata_path = BASE / 'metadata.parquet' 
+    prompts = get_prompts_diffusiondb(metadata_path)
+
+    path = BASE / 'data/diffusion_db.json'
+    write_json(path, prompts)
+    breakpoint()
