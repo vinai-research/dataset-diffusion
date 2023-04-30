@@ -4,8 +4,8 @@ from pathlib import Path
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 from nltk.corpus import wordnet
-from typing import List
-
+from typing import List, Dict
+from const import ALIAS
 
 def get_token_indices_from_classes(classes: List[str],
                                    prompts: List[str]):
@@ -38,6 +38,32 @@ def get_token_indices_from_classes(classes: List[str],
             valid.append(True)
     return indices, class_labels, np.array(valid)
 
+def normalize_prompt(prompt: str, alias: Dict):
+    """
+    Replace the alias name by the class name in VOC2012 classes
+    Refer /src/const.py:    for the alias and classes definition
+    """
+    #   Process compound word
+    for alias_name in ALIAS['diningtable']:
+        if prompt.find(alias_name):
+            prompt = prompt.replace(alias_name, 'diningtable')
+            break
+
+    for alias_name in ALIAS['pottedplant']:
+        if prompt.find(alias_name):
+            prompt = prompt.replace(alias_name, 'pottedpalnt')
+            break
+
+    word_tokens = word_tokenize(prompt)
+    #   Process single word    
+    for name_class, class_alias in alias.items():
+        for item in class_alias: 
+            if item in word_tokens:
+                index = word_tokens.index(item)
+                word_tokens[index] = name_class
+
+    prompt = ' '.join(word_tokens).rstrip(' ')
+    return prompt
 
 def get_valid_prompts(classes: List[str],
                       prompts: List[dict]):
@@ -49,12 +75,13 @@ def get_valid_prompts(classes: List[str],
         for syn in wordnet.synsets(word):
             for lemma in syn.lemmas():
                 classes_syn.update({lemma.name(): class_id})
-
+    
     lemmatizer = WordNetLemmatizer()
     for i, prompt in enumerate(prompts):
         prompt = prompt['caption']
-        norm_prompt = prompt.replace("woman", "person").replace(
-            "man", "person").replace("women", "person").replace("men", "person")
+
+        norm_prompt = normalize_prompt(prompt, ALIAS)
+        breakpoint()
         tokens = word_tokenize(norm_prompt)
         normalized_tokens = [lemmatizer.lemmatize(
             token.lower()) for token in tokens]
@@ -70,3 +97,19 @@ def get_valid_prompts(classes: List[str],
             class_labels.append(curr_labels)
 
     return indices, class_labels, valid_prompts
+
+# def test():
+
+#     classes=('aeroplane', 'bicycle', 'bird', 'boat',
+#         'bottle', 'bus', 'car', 'cat', 'chair', 'cow', 'diningtable',
+#         'dog', 'horse', 'motorbike', 'person', 'pottedplant', 'sheep',
+#         'sofa', 'train', 'tvmonitor')
+    
+#     prompts = {
+#         'id': 123123,
+#         'caption': 'a group of people are in the dining table'
+#     }
+
+#     get_valid_prompts(classes, [prompts])
+
+# test()
