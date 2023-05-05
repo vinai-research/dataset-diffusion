@@ -130,8 +130,22 @@ class AttentionControl(abc.ABC):
         raise NotImplementedError
 
     def __call__(self, attn, heads, is_cross: bool, place_in_unet: str):
+
+        #   attn: [negative_prompt_embedding, prompt_embedding]
+        #   first chunk is the negative_prompt_embedding
+        #   second chunk is the prompt_embedding
         h = attn.shape[0]
-        attn[h // 2:] = self.forward(attn[h // 2:], heads, is_cross, place_in_unet)
+
+        """
+        Forward all the attention_probs to store the cross and self of prompt and negative prompt
+
+        Cross_attention: [batch, 2, heads, res, res, n_tokens]
+        Self0_attention: [batch, 2, res**2, res**2]
+
+        """
+        # attn[:h//2] = self.forward(attn[:h//2], heads, is_cross, place_in_unet)
+        attn = self.forward(attn, heads, is_cross, place_in_unet)           
+
         self.cur_att_layer += 1
         if self.cur_att_layer == self.num_att_layers:
             self.cur_att_layer = 0
@@ -192,16 +206,40 @@ def aggregate_attention(attention_store: AttentionStore,
                         res: int,
                         from_where: List[str],
                         is_cross: bool,
-                        select: int) -> torch.Tensor:
+                        select: int,
+                        negative_prompt: str = None) -> torch.Tensor:
     """ Aggregates the attention across the different layers and heads at the specified resolution. """
     out = []
     attention_maps = attention_store.get_average_attention()
+    # breakpoint()
     num_pixels = res ** 2
+
+    out_negative = None
+    if negative_prompt is not None:
+        out_negative = []
+
     for location in from_where:
         for item in attention_maps[f"{location}_{'cross' if is_cross else 'self'}"]:
-            if item.shape[1] == num_pixels:
-                cross_maps = item.reshape(1, -1, res, res, item.shape[-1])[select]
-                out.append(cross_maps)
+
+            if item.shape[2] == res: 
+
+                if len(item.shape) == 4:
+                    cross_maps = item.reshape(1, -1, res, res, item.shape[-1])[select]
+                    out.append(cross_maps)
+
+                if len(item.shape) == 5: 
+                    cross_maps = item[1].reshape(1, -1, res, res, item.shape[-1])[select]
+                    out.append(cross_maps)
+                    if out_negative is not None:
+                        neg_cross_maps =item[0].reshape(1, -1, res, res, item.shape[-1])[select] 
+                        out_negative.append(neg_cross_maps)
+
     out = torch.cat(out, dim=0)
     out = out.sum(0) / out.shape[0]
+
+    if len(out_negative) > 0 and negative_prompt is not None:
+        out_negative = torch.cat(out_negative, dim = 0)
+        out_negative = out_negative.sum(0) / out_negative[0]
+        return out, out_negative
+
     return out

@@ -1,11 +1,12 @@
 import pandas as pd
 import numpy as np
+import sys
 from pathlib import Path
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 from nltk.corpus import wordnet
 from typing import List, Dict
-from const import ALIAS
+from .const import ALIAS
 
 def get_token_indices_from_classes(classes: List[str],
                                    prompts: List[str]):
@@ -81,7 +82,7 @@ def get_valid_prompts(classes: List[str],
         prompt = prompt['caption']
 
         norm_prompt = normalize_prompt(prompt, ALIAS)
-        breakpoint()
+        # breakpoint()
         tokens = word_tokenize(norm_prompt)
         normalized_tokens = [lemmatizer.lemmatize(
             token.lower()) for token in tokens]

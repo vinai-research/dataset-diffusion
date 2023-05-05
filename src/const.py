@@ -1,5 +1,5 @@
 from pathlib import Path
-
+BASE = Path(__file__).resolve().parent.parent
 
 classes=['aeroplane', 'bicycle', 'bird', 'boat',
         'bottle', 'bus', 'car', 'cat', 'chair', 'cow', 'diningtable',
