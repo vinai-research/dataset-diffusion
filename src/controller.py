@@ -237,9 +237,9 @@ def aggregate_attention(attention_store: AttentionStore,
     out = torch.cat(out, dim=0)
     out = out.sum(0) / out.shape[0]
 
-    if len(out_negative) > 0 and negative_prompt is not None:
+
+    if out_negative is not None and len(out_negative) > 0:
         out_negative = torch.cat(out_negative, dim = 0)
         out_negative = out_negative.sum(0) / out_negative[0]
         return out, out_negative
-
     return out

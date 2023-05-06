@@ -5,7 +5,7 @@ from cv2 import putText, getTextSize, FONT_HERSHEY_SIMPLEX
 import matplotlib.pyplot as plt
 from PIL import Image
 from .controller import AttentionStore
-
+import cv2
 
 def aggregate_attention(attention_store: AttentionStore, res: int, from_where: List[str], is_cross: bool):
     out = []
@@ -18,12 +18,14 @@ def aggregate_attention(attention_store: AttentionStore, res: int, from_where: L
     return out.cpu()
 
 
-def show_cross_attention(cross_attention: torch.Tensor, res: int, from_where: List[str], prompts, tokenizer, select: int = 0):
+def show_cross_attention(cross_attention: torch.Tensor, res: int, from_where: List[str], prompts, 
+                         tokenizer, orig_image, select: int = 0):
     tokens = tokenizer.encode(prompts[select])
     decoder = tokenizer.decode
     images = []
     for i in range(len(tokens)):
         image = cross_attention[:, :, i]
+        image = show_image_relevance(cross_attention, orig_image)
         image = 255 * image / image.max()
         image = image.unsqueeze(-1).expand(*image.shape, 3)
         image = image.numpy().astype(np.uint8)
@@ -32,6 +34,23 @@ def show_cross_attention(cross_attention: torch.Tensor, res: int, from_where: Li
         images.append(image)
     return view_images(np.stack(images, axis=0))
 
+def show_cross_attention_relevance(cross_attention, orig_image, tokenizer, 
+                                   prompts: List[str], dst_res: int = 512, select: int = 0):
+
+    # breakpoint()
+    tokens = tokenizer.encode(prompts[select])
+    decoder = tokenizer.decode
+    images = []
+
+    for i in range(len(tokens)):
+        image = cross_attention[:, :, i]
+        image = show_image_relevance(image, orig_image, dst_res)
+        image = image.astype(np.uint8)
+        image = np.array(Image.fromarray(image).resize((dst_res, dst_res)))
+        image = text_under_image(image, decoder(int(tokens[i])))
+        images.append(image)
+
+    return view_images(np.stack(images, axis = 0))
 
 def show_self_attention_comp(self_attention: torch.Tensor, res: int, from_where: List[str],
                              max_com=10, select: int = 0):
@@ -48,8 +67,31 @@ def show_self_attention_comp(self_attention: torch.Tensor, res: int, from_where:
         images.append(image)
     return view_images(np.concatenate(images, axis=1))
 
+def show_image_relevance(image_relevance, image: np.array, relevnace_res=256):
+    # create heatmap from mask on image
+    def show_cam_on_image(img, mask):
+        heatmap = cv2.applyColorMap(np.uint8(255 * mask), cv2.COLORMAP_JET)
+        heatmap = np.float32(heatmap) / 255
+        cam = heatmap + np.float32(img)
+        cam = cam / np.max(cam)
+        return cam
 
-def view_images(images, num_rows=1, offset_ratio=0.02):
+    # image = image.resize((relevnace_res ** 2, relevnace_res ** 2))
+    # image = np.array(image)
+
+    image_relevance = image_relevance.reshape(1, 1, image_relevance.shape[-1], image_relevance.shape[-1])
+    image_relevance = image_relevance.cuda() # because float16 precision interpolation is not supported on cpu
+    image_relevance = torch.nn.functional.interpolate(image_relevance, size=relevnace_res, mode='bilinear')
+    image_relevance = image_relevance.cpu() # send it back to cpu
+    image_relevance = (image_relevance - image_relevance.min()) / (image_relevance.max() - image_relevance.min())
+    image_relevance = image_relevance.reshape(relevnace_res, relevnace_res)
+    image = (image - image.min()) / (image.max() - image.min())
+    vis = show_cam_on_image(image, image_relevance)
+    vis = np.uint8(255 * vis)
+    vis = cv2.cvtColor(np.array(vis), cv2.COLOR_RGB2BGR)
+    return vis
+
+def view_images(images, num_rows=2, offset_ratio=0.02):
     if type(images) is list:
         num_empty = len(images) % num_rows
     elif images.ndim == 4:
